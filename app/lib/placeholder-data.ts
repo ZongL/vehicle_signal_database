@@ -1,4 +1,7 @@
 // This file contains placeholder data that you'll be replacing with real data in the Data Fetching chapter:
+
+import { Meera_Inimai } from "next/font/google";
+
 // https://nextjs.org/learn/dashboard-app/fetching-data
 const users = [
   {
@@ -8,6 +11,23 @@ const users = [
     password: '123456',
   },
 ];
+
+const signals = [
+  {
+    id:'410544b2-4001-4271-9855-xxxxb6a6442a',
+    name:'VehSpd',
+    length:'16',
+    byteorder:'Intel',
+    valuetype:'Unsigned',
+    initialvalue:'0',
+    factor:'0.001',
+    offset:'0',
+    minivalue:'0',
+    maxvalue:'300',
+    unit:'rpm',
+  },
+];
+
 
 const customers = [
   {
