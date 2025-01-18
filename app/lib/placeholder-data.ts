@@ -12,19 +12,28 @@ const users = [
   },
 ];
 
+const zongtest = [
+  {
+    id: '410544b2-4001-4271-9855-fec4b6a6442a',
+    name: 'zongtest',
+    email: 'zongtest@zongtest.com',
+    password: '123456',
+  },
+];
+
 const signals = [
   {
-    id:'410544b2-4001-4271-9855-xxxxb6a6442a',
+    id:'410544b2-4001-4271-9855-1111b6a6442a',
     name:'VehSpd',
-    length:'16',
+    length:16,
     byteorder:'Intel',
     valuetype:'Unsigned',
-    initialvalue:'0',
-    factor:'0.001',
-    offset:'0',
-    minivalue:'0',
-    maxvalue:'300',
-    unit:'rpm',
+    initialvalue:0,
+    factor:0.001,
+    sigoffset:0,
+    minivalue:0,
+    maxvalue:300,
+    unit:'mps',
   },
 ];
 
@@ -164,4 +173,4 @@ const revenue = [
   { month: 'Dec', revenue: 4800 },
 ];
 
-export { users, customers, invoices, revenue };
+export { users, customers, invoices, revenue ,signals,zongtest};

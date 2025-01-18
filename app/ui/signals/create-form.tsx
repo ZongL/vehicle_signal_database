@@ -84,8 +84,8 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
           </div>
         </div>
 
-        {/* Invoice Status */}
-        <fieldset>
+        {/* Invoice Status  comment by zong*/}
+        {/* <fieldset>
           <legend className="mb-2 block text-sm font-medium">
             Set the invoice status
           </legend>
@@ -131,7 +131,7 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
                 </p>
               ))}
           </div>
-        </fieldset>
+        </fieldset> */}
 
         <div aria-live="polite" aria-atomic="true">
           {state.message ? (
