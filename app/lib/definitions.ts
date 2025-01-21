@@ -44,6 +44,21 @@ export type LatestInvoiceRaw = Omit<LatestInvoice, 'amount'> & {
   amount: number;
 };
 
+export type SignalsTable = {
+  id:string,
+  name:string,
+  length:number,
+  byteorder:string,
+  valuetype:string,
+  initialvalue:number,
+  factor:number,
+  offset:number,
+  minivalue:number,
+  maxvalue:number,
+  unit:string,
+  //status: 'pending' | 'paid';
+};
+
 export type InvoicesTable = {
   id: string;
   customer_id: string;
