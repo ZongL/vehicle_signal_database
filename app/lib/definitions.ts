@@ -52,7 +52,7 @@ export type SignalsTable = {
   valuetype:string,
   initialvalue:number,
   factor:number,
-  offset:number,
+  sigoffset:number,
   minivalue:number,
   maxvalue:number,
   unit:string,
