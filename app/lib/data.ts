@@ -135,11 +135,12 @@ export async function fetchFilteredSignals(
         signals.byteorder,
         signals.valuetype,
         signals.initialvalue,
-        Signals.factor,
-        Signals.sigoffset,
-        Signals.minivalue,
-        Signals.maxvalue,
-        Signals.unit,
+        signals.factor,
+        signals.sigoffset,
+        signals.minivalue,
+        signals.maxvalue,
+        signals.unit
+      FROM signals
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
 
@@ -202,7 +203,7 @@ export async function fetchSignals() {
       SELECT
         id,
         name
-      FROM customers
+      FROM signals
       ORDER BY name ASC
     `;
 

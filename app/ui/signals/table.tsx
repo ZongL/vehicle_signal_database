@@ -26,7 +26,7 @@ export default async function SignalsTable({
                 <div className="flex items-center justify-between border-b pb-4">
                   <div>
                     <div className="mb-2 flex items-center">
-  
+
                     </div>
                     <p className="text-sm text-gray-500">{signal.name}</p>
                   </div>
@@ -50,19 +50,34 @@ export default async function SignalsTable({
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  Customer
+                  Name
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Email
+                  Length
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Amount
+                  Byteorder
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Date
+                  Valuetype
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Status
+                  Initialvalue
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Factor
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                Sigoffset
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                Minivalue
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                Maxvalue
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                Unit
                 </th>
                 <th scope="col" className="relative py-3 pl-6 pr-3">
                   <span className="sr-only">Edit</span>
@@ -77,7 +92,6 @@ export default async function SignalsTable({
                 >
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex items-center gap-3">
-                      
                       <p>{signal.name}</p>
                     </div>
                   </td>
@@ -85,13 +99,28 @@ export default async function SignalsTable({
                     {signal.length}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {formatCurrency(signal.factor)}
+                    {signal.byteorder}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {formatCurrency(signal.factor)}
+                    {signal.valuetype}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    
+                    {signal.initialvalue}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {(signal.factor)}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {(signal.sigoffset)}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {signal.minivalue}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {signal.maxvalue}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {signal.unit}
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
