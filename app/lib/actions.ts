@@ -21,6 +21,45 @@ const FormSchema = z.object({
   date: z.string(),
 });
 
+const SignalSchema = z.object({
+  name: z.string({
+    invalid_type_error: 'Please enter a signal name.',
+  }),
+  length: z.coerce
+    .number()
+    .gt(0, { message: 'Please enter a length greater than 0.' }),
+  byteorder: z.enum(['big-endian', 'little-endian'], {
+    invalid_type_error: 'Please select a byte order.',
+  }),
+  valuetype: z.enum(['signed', 'unsigned'], {
+    invalid_type_error: 'Please select a value type.',
+  }),
+  initialvalue: z.coerce.number().optional(),
+  factor: z.coerce.number().optional(),
+  sigoffset: z.coerce.number().optional(),
+  minivalue: z.coerce.number().optional(),
+  maxvalue: z.coerce.number().optional(),
+  unit: z.string().optional(),
+});
+export type sigState = {
+  errors?: {
+    customerId?: string[];
+    amount?: string[];
+    status?: string[];
+    name?: string[];
+    length?: string[];
+    byteorder?: string[];
+    valuetype?: string[];
+    initialvalue?: string[];
+    factor?: string[];
+    sigoffset?: string[];
+    minivalue?: string[];
+    maxvalue?: string[];
+    unit?: string[];
+  };
+  message?: string | null;
+};
+
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
 const UpdateInvoice = FormSchema.omit({ date: true, id: true });
 
@@ -33,6 +72,50 @@ export type State = {
   message?: string | null;
 };
 
+export async function createSignals(prevState: sigState, formData: FormData) {
+  // Validate form fields using Zod
+  const validatedFields = SignalSchema.safeParse({
+    name: formData.get('name'),
+    length: formData.get('length'),
+    byteorder: formData.get('byteorder'),
+    valuetype: formData.get('valuetype'),
+    initialvalue: formData.get('initialvalue'),
+    factor: formData.get('factor'),
+    sigoffset: formData.get('sigoffset'),
+    minivalue: formData.get('minivalue'),
+    maxvalue: formData.get('maxvalue'),
+    unit: formData.get('unit'),
+  });
+
+  // If form validation fails, return errors early. Otherwise, continue.
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Missing Fields. Failed to Create Signal.',
+    };
+  }
+
+  // Prepare data for insertion into the database
+  const { name, length, byteorder, valuetype, initialvalue, factor, sigoffset, minivalue, maxvalue, unit } = validatedFields.data;
+
+  // Insert data into the database
+  try {
+    await sql`
+      INSERT INTO signals (name, length, byteorder, valuetype, initialvalue, factor, sigoffset, minivalue, maxvalue, unit)
+      VALUES (${name}, ${length}, ${byteorder}, ${valuetype}, ${initialvalue}, ${factor}, ${sigoffset}, ${minivalue}, ${maxvalue}, ${unit})
+      RETURNING *;
+    `;
+  } catch (error) {
+    // If a database error occurs, return a more specific error.
+    return {
+      message: 'Database Error: Failed to Create Signal.',
+    };
+  }
+
+  // Revalidate the cache for the signals page and redirect the user.
+  revalidatePath('/dashboard/signals');
+  redirect('/dashboard/signals');
+}
 export async function createInvoice(prevState: State, formData: FormData) {
   // Validate form fields using Zod
   const validatedFields = CreateInvoice.safeParse({
