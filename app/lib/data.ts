@@ -199,7 +199,7 @@ export async function fetchInvoiceById(id: string) {
 
 export async function fetchSignals() {
   try {
-    const data = await sql<CustomerField>`
+    const data = await sql<SignalsTable>`
       SELECT
         id,
         name
