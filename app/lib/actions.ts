@@ -102,6 +102,7 @@ export async function createSignals(prevState: signalState, formData: FormData) 
   const { name, length, byteorder, valuetype, initialvalue, factor, sigoffset, minivalue, maxvalue, unit } = validatedFields.data;
 
   // Insert data into the database
+  //console.log(name);
   try {
     await sql`
       INSERT INTO signals (name, length, byteorder, valuetype, initialvalue, factor, sigoffset, minivalue, maxvalue, unit)
@@ -109,6 +110,7 @@ export async function createSignals(prevState: signalState, formData: FormData) 
       RETURNING *;
     `;
   } catch (error) {
+    console.log(error);
     // If a database error occurs, return a more specific error.
     return {
       message: 'Database Error: Failed to Create Signal.',
