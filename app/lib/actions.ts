@@ -22,18 +22,22 @@ const FormSchema = z.object({
 });
 
 const SignalSchema = z.object({
-  name: z.string({
-    invalid_type_error: 'Please enter a signal name.',
-  }),
-  length: z.coerce
-    .number()
-    .gt(0, { message: 'Please enter a length greater than 0.' }),
-  byteorder: z.enum(['big-endian', 'little-endian'], {
-    invalid_type_error: 'Please select a byte order.',
-  }),
-  valuetype: z.enum(['signed', 'unsigned'], {
-    invalid_type_error: 'Please select a value type.',
-  }),
+  // name: z.string({
+  //   invalid_type_error: 'Please enter a signal name.',
+  // }),
+  // length: z.coerce
+  //   .number()
+  //   .gt(0, { message: 'Please enter a length greater than 0.' }),
+  // byteorder: z.enum(['big-endian', 'little-endian'], {
+  //   invalid_type_error: 'Please select a byte order.',
+  // }),
+  // valuetype: z.enum(['signed', 'unsigned'], {
+  //   invalid_type_error: 'Please select a value type.',
+  // }),
+  name: z.string().optional(),
+  length: z.coerce.number().optional(),
+  byteorder: z.string().optional(),
+  valuetype: z.string().optional(),
   initialvalue: z.coerce.number().optional(),
   factor: z.coerce.number().optional(),
   sigoffset: z.coerce.number().optional(),
@@ -41,11 +45,8 @@ const SignalSchema = z.object({
   maxvalue: z.coerce.number().optional(),
   unit: z.string().optional(),
 });
-export type sigState = {
+export type signalState = {
   errors?: {
-    customerId?: string[];
-    amount?: string[];
-    status?: string[];
     name?: string[];
     length?: string[];
     byteorder?: string[];
@@ -63,6 +64,8 @@ export type sigState = {
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
 const UpdateInvoice = FormSchema.omit({ date: true, id: true });
 
+//const CreateSignalss = SignalSchema.omit({ id: true});
+
 export type State = {
   errors?: {
     customerId?: string[];
@@ -72,7 +75,7 @@ export type State = {
   message?: string | null;
 };
 
-export async function createSignals(prevState: sigState, formData: FormData) {
+export async function createSignals(prevState: signalState, formData: FormData) {
   // Validate form fields using Zod
   const validatedFields = SignalSchema.safeParse({
     name: formData.get('name'),
