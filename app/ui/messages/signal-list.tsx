@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useDrag } from 'react-dnd';
-import type { Identifier, XYCoord } from 'dnd-core';
+
 import { Signal } from '@/app/lib/definitions';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
@@ -23,7 +23,7 @@ function SignalBlock({ signal }: { signal: Signal }) {
 
   return (
     <div
-      ref={dragRef}
+      ref={(dragRef as unknown) as React.RefObject<HTMLDivElement>}
       className={`p-4 mb-2 rounded-lg border ${
         isDragging ? 'opacity-50 bg-gray-100' : 'bg-white'
       } cursor-move hover:shadow-md transition-all`}

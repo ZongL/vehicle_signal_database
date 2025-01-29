@@ -22,10 +22,10 @@ export default function MessageEditor() {
 
   const [messageSignals, setMessageSignals] = useState<MessageSignal[]>([]);
 
-  const [{ isOver }, dropRef] = useDrop<DragItem, void, { isOver: boolean }>({
+  const [{ isOver }, dropRef] = useDrop<Signal, void, { isOver: boolean }>({
     accept: 'SIGNAL',
-    drop: (item: DragItem) => {
-      handleSignalDrop(item.signal);
+    drop: (item) => {
+      handleSignalDrop(item);
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
@@ -54,7 +54,7 @@ export default function MessageEditor() {
 
   return (
     <div
-      ref={dropRef}
+      ref={(dropRef as unknown) as React.RefObject<HTMLDivElement>}
       className={`min-h-[400px] p-4 rounded-lg border-2 border-dashed ${
         isOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
       }`}
