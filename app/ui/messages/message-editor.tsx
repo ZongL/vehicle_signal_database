@@ -2,7 +2,13 @@
 
 import { useState } from 'react';
 import { useDrop } from 'react-dnd';
+import type { Identifier } from 'dnd-core';
 import { Signal, Message, MessageSignal } from '@/app/lib/definitions';
+
+interface DragItem {
+  type: string;
+  signal: Signal;
+}
 
 export default function MessageEditor() {
   const [message, setMessage] = useState<Message>({
@@ -16,15 +22,15 @@ export default function MessageEditor() {
 
   const [messageSignals, setMessageSignals] = useState<MessageSignal[]>([]);
 
-  const [{ isOver }, drop] = useDrop(() => ({
+  const [{ isOver }, dropRef] = useDrop<DragItem, void, { isOver: boolean }>({
     accept: 'SIGNAL',
-    drop: (item: Signal) => {
-      handleSignalDrop(item);
+    drop: (item: DragItem) => {
+      handleSignalDrop(item.signal);
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
     }),
-  }));
+  });
 
   const handleSignalDrop = (signal: Signal) => {
     // Calculate start bit and position based on existing signals
@@ -48,7 +54,7 @@ export default function MessageEditor() {
 
   return (
     <div
-      ref={drop}
+      ref={dropRef}
       className={`min-h-[400px] p-4 rounded-lg border-2 border-dashed ${
         isOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
       }`}
