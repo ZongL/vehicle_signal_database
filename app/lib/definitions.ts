@@ -101,3 +101,34 @@ export type InvoiceForm = {
   amount: number;
   status: 'pending' | 'paid';
 };
+
+export type Signal = {
+  id: string;
+  name: string;
+  length: number;
+  byteorder: string;
+  valuetype: string;
+  initialvalue: number;
+  factor: number;
+  sigoffset: number;
+  minivalue: number;
+  maxvalue: number;
+  unit: string;
+};
+
+export type Message = {
+  id: string;
+  name: string;
+  message_id: string;  // CAN message ID
+  dlc: number;        // Data Length Code
+  signals: Signal[];  // Associated signals
+  created_at: string;
+};
+
+export type MessageSignal = {
+  message_id: string;
+  signal_id: string;
+  start_bit: number;
+  length: number;
+  position: number;  // Order in the message
+};
