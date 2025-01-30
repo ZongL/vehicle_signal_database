@@ -22,10 +22,11 @@ export default function MessageEditor() {
 
   const [messageSignals, setMessageSignals] = useState<MessageSignal[]>([]);
 
-  const [{ isOver }, dropRef] = useDrop<Signal, void, { isOver: boolean }>({
+  const [{ isOver }, dropRef] = useDrop<DragItem, void, { isOver: boolean }>({
     accept: 'SIGNAL',
-    drop: (item) => {
-      handleSignalDrop(item);
+    drop: (item:DragItem) => {
+      console.log('Drop event triggered'); // 添加这行来确认 drop 事件是否触发
+      handleSignalDrop(item.signal);
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
@@ -33,9 +34,10 @@ export default function MessageEditor() {
   });
 
   const handleSignalDrop = (signal: Signal) => {
-    // Calculate start bit and position based on existing signals
+    console.log('Dropped signal:', signal);
+    
     const position = messageSignals.length;
-    const startBit = position * 8; // Simple calculation, you might want to make this more sophisticated
+    const startBit = position * 8;
 
     const newMessageSignal: MessageSignal = {
       message_id: message.id,
@@ -43,8 +45,11 @@ export default function MessageEditor() {
       start_bit: startBit,
       length: signal.length,
       position: position,
+      name: signal.name,
     };
 
+    console.log('New message signal:', newMessageSignal);
+    
     setMessageSignals([...messageSignals, newMessageSignal]);
     setMessage({
       ...message,
@@ -83,7 +88,7 @@ export default function MessageEditor() {
             className="p-3 bg-white rounded-lg border shadow-sm"
           >
             <div className="flex justify-between items-center">
-              <span className="font-medium">{signal.name}</span>
+              <span className="font-medium">{messageSignals[index]?.name || signal.name}</span>
               <span className="text-sm text-gray-500">
                 Start Bit: {messageSignals[index]?.start_bit}
               </span>

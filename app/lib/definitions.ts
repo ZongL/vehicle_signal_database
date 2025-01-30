@@ -131,4 +131,5 @@ export type MessageSignal = {
   start_bit: number;
   length: number;
   position: number;  // Order in the message
+  name: string;
 };
