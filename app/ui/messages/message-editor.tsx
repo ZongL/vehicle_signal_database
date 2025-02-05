@@ -58,53 +58,60 @@ export default function MessageEditor() {
   };
 
   return (
-    <div
-      ref={(dropRef as unknown) as React.RefObject<HTMLDivElement>}
-      className={`min-h-[400px] p-4 rounded-lg border-2 border-dashed ${
-        isOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
-      }`}
-    >
-      <div className="mb-4">
-        <input
-          type="text"
-          placeholder="Message Name"
-          className="w-full p-2 border rounded"
-          value={message.name}
-          onChange={(e) => setMessage({ ...message, name: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Message ID (hex)"
-          className="w-full mt-2 p-2 border rounded"
-          value={message.message_id}
-          onChange={(e) => setMessage({ ...message, message_id: e.target.value })}
-        />
-      </div>
-
-      <div className="space-y-2">
-        {message.signals.map((signal, index) => (
-          <div
-            key={index}
-            className="p-3 bg-white rounded-lg border shadow-sm"
-          >
-            <div className="flex justify-between items-center">
-              <span className="font-medium">{messageSignals[index]?.name || signal.name}</span>
-              <span className="text-sm text-gray-500">
-                Start Bit: {messageSignals[index]?.start_bit}
-              </span>
-            </div>
-            <div className="text-sm text-gray-500 mt-1">
-              Length: {signal.length} bits
-            </div>
+    <div className="flex gap-6">
+      {/* Message Editor */}
+      <div className="flex-1">
+        <div
+          ref={(dropRef as unknown) as React.RefObject<HTMLDivElement>}
+          className={`min-h-[400px] p-4 rounded-lg border-2 border-dashed ${
+            isOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+          }`}
+        >
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="Message Name"
+              className="w-full p-2 border rounded"
+              value={message.name}
+              onChange={(e) => setMessage({ ...message, name: e.target.value })}
+            />
+            <input
+              type="text"
+              placeholder="Message ID (hex)"
+              className="w-full mt-2 p-2 border rounded"
+              value={message.message_id}
+              onChange={(e) => setMessage({ ...message, message_id: e.target.value })}
+            />
           </div>
-        ))}
+
+          <div className="space-y-2">
+            {message.signals.map((signal, index) => (
+              <div
+                key={index}
+                className="p-3 bg-white rounded-lg border shadow-sm"
+              >
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">{messageSignals[index]?.name || signal.name}</span>
+                  <span className="text-sm text-gray-500">
+                    Start Bit: {messageSignals[index]?.start_bit}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-500 mt-1">
+                  Length: {signal.length} bits
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {message.signals.length === 0 && (
+            <div className="text-center text-gray-500 mt-8">
+              Drag and drop signals here to create your message
+            </div>
+          )}
+        </div>
       </div>
 
-      {message.signals.length === 0 && (
-        <div className="text-center text-gray-500 mt-8">
-          Drag and drop signals here to create your message
-        </div>
-      )}
+
     </div>
   );
 } 

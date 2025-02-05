@@ -6,10 +6,12 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import SignalList from '@/app/ui/messages/signal-list';
 import MessageEditor from '@/app/ui/messages/message-editor';
+import MessageList from '@/app/ui/messages/message-list';
 
 export default function Page() {
   return (
     <DndProvider backend={HTML5Backend}>
+
       <div className="w-full">
         <div className="flex w-full items-center justify-between">
           <h1 className={`${lusitana.className} text-2xl`}>Messages</h1>
@@ -18,7 +20,7 @@ export default function Page() {
           <CreateMessage />
         </div>
         
-        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4">
+        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-5">
           {/* Left side: Signal blocks */}
           <div className="md:col-span-1 bg-gray-50 p-4 rounded-lg">
             <h2 className="text-xl font-semibold mb-4">Available Signals</h2>
@@ -29,6 +31,11 @@ export default function Page() {
           <div className="md:col-span-3 bg-white p-4 rounded-lg border">
             <h2 className="text-xl font-semibold mb-4">Message Editor</h2>
             <MessageEditor />
+          </div>
+          {/* Available Messages */}
+          <div className="md:col-span-1 bg-gray-50 p-4 rounded-lg border">
+            <h2 className="text-xl font-semibold mb-4">Available Message</h2>
+            <MessageList />
           </div>
         </div>
       </div>
