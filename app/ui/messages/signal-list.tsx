@@ -87,24 +87,7 @@ export default function SignalList() {
       <div className="space-y-2 max-h-[600px] overflow-y-auto">
         {signals.length > 0 ? (
           signals.map((signal) => (
-            <div
-              key={signal.id}
-              className="p-3 bg-white rounded-lg border shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className="font-medium">{signal.name}</div>
-              {signal.description && (
-                <div className="text-sm text-gray-600 mt-1">
-                  {signal.description}
-                </div>
-              )}
-              <div className="text-sm text-gray-500 mt-1">
-                <div>Length: {signal.length} bits</div>
-                <div>Start: Byte {signal.startbyte}, Bit {signal.startbit}</div>
-                <div>
-                  Range: {signal.minivalue} to {signal.maxvalue} {signal.unit}
-                </div>
-              </div>
-            </div>
+            <SignalBlock key={signal.id} signal={signal} />
           ))
         ) : (
           <div className="text-center text-gray-500 py-4">
