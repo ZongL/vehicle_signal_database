@@ -131,15 +131,21 @@ export async function fetchFilteredSignals(
       SELECT
         signals.id,
         signals.name,
+        signals.description,
         signals.length,
         signals.byteorder,
         signals.valuetype,
+        signals.startbyte,
+        signals.startbit,
         signals.initialvalue,
         signals.factor,
         signals.sigoffset,
         signals.minivalue,
         signals.maxvalue,
-        signals.unit
+        signals.rawminivalue,
+        signals.rawmaxvalue,
+        signals.unit,
+        signals.valuedescription
       FROM signals
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;

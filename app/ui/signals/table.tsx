@@ -52,6 +52,9 @@ export default async function SignalsTable({
                 <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
                   Name
                 </th>
+                <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                  Description
+                </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Length
                 </th>
@@ -60,6 +63,12 @@ export default async function SignalsTable({
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Valuetype
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Startbyte
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Startbit
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Initialvalue
@@ -77,7 +86,16 @@ export default async function SignalsTable({
                 Maxvalue
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
+                Rawminivalue
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                Rawmaxvalue
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
                 Unit
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                Valuedescription
                 </th>
                 <th scope="col" className="relative py-3 pl-6 pr-3">
                   <span className="sr-only">Edit</span>

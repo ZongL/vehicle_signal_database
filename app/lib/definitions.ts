@@ -47,15 +47,21 @@ export type LatestInvoiceRaw = Omit<LatestInvoice, 'amount'> & {
 export type SignalsTable = {
   id:string,
   name:string,
+  description:string,
   length:number,
   byteorder:string,
   valuetype:string,
+  startbyte:number,
+  startbit:number,
   initialvalue:number,
   factor:number,
   sigoffset:number,
   minivalue:number,
   maxvalue:number,
+  rawminivalue:number,
+  rawmaxvalue:number,
   unit:string,
+  valuedescription:string,
   //status: 'pending' | 'paid';
 };
 
@@ -102,19 +108,25 @@ export type InvoiceForm = {
   status: 'pending' | 'paid';
 };
 
-export type Signal = {
+export interface Signal {
   id: string;
   name: string;
+  description: string;
   length: number;
   byteorder: string;
   valuetype: string;
+  startbyte: number;
+  startbit: number;
   initialvalue: number;
   factor: number;
   sigoffset: number;
   minivalue: number;
   maxvalue: number;
+  rawminivalue: number;
+  rawmaxvalue: number;
   unit: string;
-};
+  valuedescription: string;
+}
 
 export type Message = {
   id: string;

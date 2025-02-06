@@ -41,7 +41,29 @@ export default function CreateSignalForm({ customers }: { customers: SignalsTabl
               ))}
           </div>
         </div>
-
+          
+        {/* Description */}
+          <div className="mb-4">
+          <label htmlFor="description" className="mb-2 block text-sm font-medium">
+            Description
+          </label>
+          <input
+            id="description"
+            name="description"
+            type="text"
+            placeholder="Enter signal description"
+            className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+            aria-describedby="description-error"
+          />
+          <div id="description-error" aria-live="polite" aria-atomic="true">
+            {sigState.errors?.description &&
+              sigState.errors.description.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
+          </div>
+        </div>
         {/* Signal Length */}
         <div className="mb-4">
           <label htmlFor="length" className="mb-2 block text-sm font-medium">
@@ -115,6 +137,53 @@ export default function CreateSignalForm({ customers }: { customers: SignalsTabl
           <div id="valuetype-error" aria-live="polite" aria-atomic="true">
             {sigState.errors?.valuetype &&
               sigState.errors.valuetype.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
+          </div>
+        </div>
+        {/* Start Byte */}
+        <div className="mb-4">
+          <label htmlFor="startbyte" className="mb-2 block text-sm font-medium">
+            Start Byte
+          </label>
+          <input
+            id="startbyte"
+            name="startbyte"
+            type="number"
+            step="1"
+            placeholder="Enter start byte"
+            className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+            aria-describedby="startbyte-error"
+          />
+          <div id="startbyte-error" aria-live="polite" aria-atomic="true">
+            {sigState.errors?.startbyte &&
+              sigState.errors.startbyte.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
+          </div>
+        </div>
+
+        {/* Start Bit */}
+        <div className="mb-4">
+          <label htmlFor="startbit" className="mb-2 block text-sm font-medium">
+            Start Bit
+          </label>
+          <input
+            id="startbit"
+            name="startbit"
+            type="number"
+            step="1"
+            placeholder="Enter start bit"
+            className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+            aria-describedby="startbit-error"
+          />
+          <div id="startbit-error" aria-live="polite" aria-atomic="true">
+            {sigState.errors?.startbit &&
+              sigState.errors.startbit.map((error: string) => (
                 <p className="mt-2 text-sm text-red-500" key={error}>
                   {error}
                 </p>
@@ -242,6 +311,55 @@ export default function CreateSignalForm({ customers }: { customers: SignalsTabl
           </div>
         </div>
 
+        {/* Raw Min Value */}
+        <div className="mb-4">
+          <label htmlFor="rawminivalue" className="mb-2 block text-sm font-medium">
+            Raw Min Value
+          </label>
+          <input
+            id="rawminivalue"
+            name="rawminivalue"
+            type="number"
+            step="0.01"
+            placeholder="Enter raw min value"
+            className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+            aria-describedby="rawminivalue-error"
+          />
+          <div id="rawminivalue-error" aria-live="polite" aria-atomic="true">
+            {sigState.errors?.rawminivalue &&
+              sigState.errors.rawminivalue.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
+          </div>
+        </div>
+
+        {/* Raw Max Value */}
+        <div className="mb-4">
+          <label htmlFor="rawmaxvalue" className="mb-2 block text-sm font-medium">
+            Raw Max Value
+          </label>
+          <input
+            id="rawmaxvalue"
+            name="rawmaxvalue"
+            type="number"
+            step="0.01"
+            placeholder="Enter raw max value"
+            className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+            aria-describedby="rawmaxvalue-error"
+          />
+          <div id="rawmaxvalue-error" aria-live="polite" aria-atomic="true">
+            {sigState.errors?.rawmaxvalue &&
+              sigState.errors.rawmaxvalue.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
+          </div>
+        </div>
+
+
         {/* Unit */}
         <div className="mb-4">
           <label htmlFor="unit" className="mb-2 block text-sm font-medium">
@@ -258,6 +376,29 @@ export default function CreateSignalForm({ customers }: { customers: SignalsTabl
           <div id="unit-error" aria-live="polite" aria-atomic="true">
             {sigState.errors?.unit &&
               sigState.errors.unit.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
+          </div>
+        </div>
+        
+        {/* Value Description */}
+        <div className="mb-4">
+          <label htmlFor="valuedescription" className="mb-2 block text-sm font-medium">
+            Value Description
+          </label>
+          <input
+            id="valuedescription"
+            name="valuedescription"
+            type="text"
+            placeholder="Enter value description"
+            className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+            aria-describedby="valuedescription-error"
+          />
+          <div id="valuedescription-error" aria-live="polite" aria-atomic="true">
+            {sigState.errors?.valuedescription &&
+              sigState.errors.valuedescription.map((error: string) => (
                 <p className="mt-2 text-sm text-red-500" key={error}>
                   {error}
                 </p>

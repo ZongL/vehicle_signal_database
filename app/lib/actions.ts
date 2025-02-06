@@ -35,28 +35,40 @@ const SignalSchema = z.object({
   //   invalid_type_error: 'Please select a value type.',
   // }),
   name: z.string().optional(),
+  description: z.string().optional(),
   length: z.coerce.number().optional(),
   byteorder: z.string().optional(),
   valuetype: z.string().optional(),
+  startbyte: z.coerce.number().optional(),
+  startbit: z.coerce.number().optional(),
   initialvalue: z.coerce.number().optional(),
   factor: z.coerce.number().optional(),
   sigoffset: z.coerce.number().optional(),
   minivalue: z.coerce.number().optional(),
   maxvalue: z.coerce.number().optional(),
+  rawminivalue: z.coerce.number().optional(),
+  rawmaxvalue: z.coerce.number().optional(),
   unit: z.string().optional(),
+  valuedescription: z.string().optional(),
 });
 export type signalState = {
   errors?: {
     name?: string[];
+    description?: string[];
     length?: string[];
     byteorder?: string[];
     valuetype?: string[];
+    startbyte?: string[];
+    startbit?: string[];
     initialvalue?: string[];
     factor?: string[];
     sigoffset?: string[];
     minivalue?: string[];
     maxvalue?: string[];
+    rawminivalue?: string[];
+    rawmaxvalue?: string[];
     unit?: string[];
+    valuedescription?: string[];
   };
   message?: string | null;
 };
@@ -79,16 +91,23 @@ export async function createSignals(prevState: signalState, formData: FormData) 
   // Validate form fields using Zod
   const validatedFields = SignalSchema.safeParse({
     name: formData.get('name'),
+    description: formData.get('description'),
     length: formData.get('length'),
     byteorder: formData.get('byteorder'),
     valuetype: formData.get('valuetype'),
+    startbyte: formData.get('startbyte'),
+    startbit: formData.get('startbit'),
     initialvalue: formData.get('initialvalue'),
     factor: formData.get('factor'),
     sigoffset: formData.get('sigoffset'),
     minivalue: formData.get('minivalue'),
     maxvalue: formData.get('maxvalue'),
+    rawminivalue: formData.get('rawminivalue'),
+    rawmaxvalue: formData.get('rawmaxvalue'),
     unit: formData.get('unit'),
+    valuedescription: formData.get('valuedescription'),
   });
+
 
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
