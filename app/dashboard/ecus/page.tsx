@@ -2,7 +2,7 @@
 
 
 import GojsDiagram from '@/app/ui/ecus/GojsDiagram';
-import DynamicPorts from '@/app/ui/ecus/Gojs2';
+
 
 export default function Home() {
   return (
