@@ -73,7 +73,16 @@ export default function Home() {
     <div>
       <main>
         <h1>veheeavis Diagram in Next.js</h1>
-        <div ref={diagramRef} style={{ width: 800, height: 600, border: '1px solid #ccc', background: '#fff' }} />
+        <div
+          ref={diagramRef}
+          style={{
+            width: 800,
+            height: 600,
+            border: '1px solid #ccc',
+            background: '#fff',
+            position: 'relative', // 关键
+          }}
+        />
       </main>
     </div>
   );
