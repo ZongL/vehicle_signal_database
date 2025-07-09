@@ -24,7 +24,7 @@ export default async function Page() {
         ]}
       />
       {/* <Form customers={customers} />   */}
-      <CreateSignalForm customers={customers} />
+      <CreateSignalForm/>
     </main>
   );
 }

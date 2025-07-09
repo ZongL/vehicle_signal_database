@@ -87,7 +87,7 @@ export default function SignalList() {
       <div className="space-y-2 max-h-[600px] overflow-y-auto">
         {signals.length > 0 ? (
           signals.map((signal) => (
-            <SignalBlock key={signal.id} signal={signal} />
+            <SignalBlock key={signal.name} signal={signal} />
           ))
         ) : (
           <div className="text-center text-gray-500 py-4">

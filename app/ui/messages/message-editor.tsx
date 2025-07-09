@@ -41,7 +41,7 @@ export default function MessageEditor() {
 
     const newMessageSignal: MessageSignal = {
       message_id: message.id,
-      signal_id: signal.id,
+      signal_name: signal.name,
       start_bit: startBit,
       length: signal.length,
       position: position,

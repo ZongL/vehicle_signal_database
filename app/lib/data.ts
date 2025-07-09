@@ -205,7 +205,7 @@ export async function fetchInvoiceById(id: string) {
 
 export async function fetchSignals() {
   try {
-    const data = await sql<SignalsTable>`
+    const data = await sql<SignalWithId>`
       SELECT
         id,
         name

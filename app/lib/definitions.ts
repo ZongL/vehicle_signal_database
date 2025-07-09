@@ -120,7 +120,7 @@ export type Message = {
 
 export type MessageSignal = {
   message_id: string;
-  signal_id: string;
+  signal_name: string;
   start_bit: number;
   length: number;
   position: number;  // Order in the message
