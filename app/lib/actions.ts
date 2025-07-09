@@ -7,6 +7,8 @@ import { redirect } from 'next/navigation';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 
+import { signalFields } from './definitions';
+
 const FormSchema = z.object({
   id: z.string(),
   customerId: z.string({
@@ -21,36 +23,16 @@ const FormSchema = z.object({
   date: z.string(),
 });
 
-const SignalSchema = z.object({
-  // name: z.string({
-  //   invalid_type_error: 'Please enter a signal name.',
-  // }),
-  // length: z.coerce
-  //   .number()
-  //   .gt(0, { message: 'Please enter a length greater than 0.' }),
-  // byteorder: z.enum(['big-endian', 'little-endian'], {
-  //   invalid_type_error: 'Please select a byte order.',
-  // }),
-  // valuetype: z.enum(['signed', 'unsigned'], {
-  //   invalid_type_error: 'Please select a value type.',
-  // }),
-  name: z.string().optional(),
-  description: z.string().optional(),
-  length: z.coerce.number().optional(),
-  byteorder: z.string().optional(),
-  valuetype: z.string().optional(),
-  startbyte: z.coerce.number().optional(),
-  startbit: z.coerce.number().optional(),
-  initialvalue: z.coerce.number().optional(),
-  factor: z.coerce.number().optional(),
-  sigoffset: z.coerce.number().optional(),
-  minivalue: z.coerce.number().optional(),
-  maxvalue: z.coerce.number().optional(),
-  rawminivalue: z.coerce.number().optional(),
-  rawmaxvalue: z.coerce.number().optional(),
-  unit: z.string().optional(),
-  valuedescription: z.string().optional(),
-});
+// Generate SignalSchema from signalFields
+const SignalSchema = z.object(
+  Object.fromEntries(
+    signalFields.map(f => [
+      f.name,
+      f.type === 'number' ? z.coerce.number().optional() : z.string().optional()
+    ])
+  )
+);
+
 export type signalState = {
   errors?: {
     name?: string[];
@@ -89,25 +71,9 @@ export type State = {
 
 export async function createSignals(prevState: signalState, formData: FormData) {
   // Validate form fields using Zod
-  const validatedFields = SignalSchema.safeParse({
-    name: formData.get('name'),
-    description: formData.get('description'),
-    length: formData.get('length'),
-    byteorder: formData.get('byteorder'),
-    valuetype: formData.get('valuetype'),
-    startbyte: formData.get('startbyte'),
-    startbit: formData.get('startbit'),
-    initialvalue: formData.get('initialvalue'),
-    factor: formData.get('factor'),
-    sigoffset: formData.get('sigoffset'),
-    minivalue: formData.get('minivalue'),
-    maxvalue: formData.get('maxvalue'),
-    rawminivalue: formData.get('rawminivalue'),
-    rawmaxvalue: formData.get('rawmaxvalue'),
-    unit: formData.get('unit'),
-    valuedescription: formData.get('valuedescription'),
-  });
-
+  const validatedFields = SignalSchema.safeParse(
+    Object.fromEntries(signalFields.map(f => [f.name, formData.get(f.name)]))
+  );
 
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
@@ -118,25 +84,26 @@ export async function createSignals(prevState: signalState, formData: FormData) 
   }
 
   // Prepare data for insertion into the database
-  const { name, length, byteorder, valuetype, initialvalue, factor, sigoffset, minivalue, maxvalue, unit } = validatedFields.data;
+  const insertData = validatedFields.data;
+  const fieldNamesArr = signalFields.map(f => f.name);
+  const fieldNames = fieldNamesArr.join(', ');
+  const fieldParams = fieldNamesArr.map(name => insertData[name] === undefined || insertData[name] === null ? '' : String(insertData[name]));
 
-  // Insert data into the database
-  //console.log(name);
   try {
     await sql`
-      INSERT INTO signals (name, length, byteorder, valuetype, initialvalue, factor, sigoffset, minivalue, maxvalue, unit)
-      VALUES (${name}, ${length}, ${byteorder}, ${valuetype}, ${initialvalue}, ${factor}, ${sigoffset}, ${minivalue}, ${maxvalue}, ${unit})
-      RETURNING *;
+      INSERT INTO signals (
+        name, description, length, byteorder, valuetype, startbyte, startbit, initialvalue, factor, sigoffset, minivalue, maxvalue, rawminivalue, rawmaxvalue, unit, valuedescription
+      ) VALUES (
+        ${fieldParams[0]}, ${fieldParams[1]}, ${fieldParams[2]}, ${fieldParams[3]}, ${fieldParams[4]}, ${fieldParams[5]}, ${fieldParams[6]}, ${fieldParams[7]}, ${fieldParams[8]}, ${fieldParams[9]}, ${fieldParams[10]}, ${fieldParams[11]}, ${fieldParams[12]}, ${fieldParams[13]}, ${fieldParams[14]}, ${fieldParams[15]}
+      ) RETURNING *;
     `;
   } catch (error) {
     console.log(error);
-    // If a database error occurs, return a more specific error.
     return {
       message: 'Database Error: Failed to Create Signal.',
     };
   }
 
-  // Revalidate the cache for the signals page and redirect the user.
   revalidatePath('/dashboard/signals');
   redirect('/dashboard/signals');
 }

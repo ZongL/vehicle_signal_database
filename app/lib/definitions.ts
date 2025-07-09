@@ -62,7 +62,6 @@ export type SignalsTable = {
   rawmaxvalue:number,
   unit:string,
   valuedescription:string,
-  //status: 'pending' | 'paid';
 };
 
 export type InvoicesTable = {
@@ -108,25 +107,7 @@ export type InvoiceForm = {
   status: 'pending' | 'paid';
 };
 
-export interface Signal {
-  id: string;
-  name: string;
-  description: string;
-  length: number;
-  byteorder: string;
-  valuetype: string;
-  startbyte: number;
-  startbit: number;
-  initialvalue: number;
-  factor: number;
-  sigoffset: number;
-  minivalue: number;
-  maxvalue: number;
-  rawminivalue: number;
-  rawmaxvalue: number;
-  unit: string;
-  valuedescription: string;
-}
+
 
 export type Message = {
   id: string;
@@ -145,3 +126,35 @@ export type MessageSignal = {
   position: number;  // Order in the message
   name: string;
 };
+
+// Signal fields definition for single source of truth
+export const signalFields = [
+  { name: 'name', type: 'string' },
+  { name: 'description', type: 'string' },
+  { name: 'length', type: 'number' },
+  { name: 'byteorder', type: 'string' },
+  { name: 'valuetype', type: 'string' },
+  { name: 'startbyte', type: 'number' },
+  { name: 'startbit', type: 'number' },
+  { name: 'initialvalue', type: 'number' },
+  { name: 'factor', type: 'number' },
+  { name: 'sigoffset', type: 'number' },
+  { name: 'minivalue', type: 'number' },
+  { name: 'maxvalue', type: 'number' },
+  { name: 'rawminivalue', type: 'number' },
+  { name: 'rawmaxvalue', type: 'number' },
+  { name: 'unit', type: 'string' },
+  { name: 'valuedescription', type: 'string' },
+] as const;
+
+
+type SignalField = typeof signalFields[number];
+type SignalFieldName = SignalField['name'];
+
+export type Signal = {
+  [K in SignalFieldName]: Extract<SignalField, { name: K }>['type'] extends 'number'
+    ? number
+    : string
+};
+
+export type SignalWithId = Signal & { id: string };

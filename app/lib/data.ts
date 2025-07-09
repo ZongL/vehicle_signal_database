@@ -6,7 +6,7 @@ import {
   InvoicesTable,
   LatestInvoiceRaw,
   Revenue,
-  SignalsTable,
+  SignalWithId, // 用自动推导的类型
 } from './definitions';
 import { formatCurrency } from './utils';
 
@@ -127,7 +127,7 @@ export async function fetchFilteredSignals(
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
-    const signals = await sql<SignalsTable>`
+    const signals = await sql<SignalWithId>`
       SELECT
         signals.id,
         signals.name,
