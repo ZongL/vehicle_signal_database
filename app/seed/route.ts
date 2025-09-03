@@ -37,15 +37,22 @@ async function seedSignals() {
       CREATE TABLE IF NOT EXISTS signals (
         id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
+        description TEXT,
         length INT NOT NULL,
         byteorder VARCHAR(255) NOT NULL,
         valuetype VARCHAR(255) NOT NULL,
+        startbyte INT,
+        startbit INT,
         initialvalue INT NOT NULL,
         factor FLOAT NOT NULL,
         sigoffset FLOAT NOT NULL,
         minivalue INT NOT NULL,
         maxvalue INT NOT NULL,
-        unit VARCHAR(255) NOT NULL
+        rawminivalue INT,
+        rawmaxvalue INT,
+        unit VARCHAR(255) NOT NULL,
+        valuedescription TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `;
   
@@ -58,6 +65,57 @@ async function seedSignals() {
     );
   
     return insertedSignals;
+  }
+  
+  async function seedMessages() {
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+  
+    // Create messages table
+    await client.sql`
+      CREATE TABLE IF NOT EXISTS messages (
+        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        message_id VARCHAR(50) NOT NULL UNIQUE,
+        dlc INTEGER NOT NULL DEFAULT 8,
+        cycle_time INTEGER,
+        description TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+  
+    // Create message_signals junction table
+    await client.sql`
+      CREATE TABLE IF NOT EXISTS message_signals (
+        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        message_id UUID REFERENCES messages(id) ON DELETE CASCADE,
+        signal_id UUID REFERENCES signals(id) ON DELETE CASCADE,
+        start_bit INTEGER NOT NULL,
+        position INTEGER NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+  
+    // Add constraints if they don't exist
+    try {
+      await client.sql`
+        ALTER TABLE message_signals ADD CONSTRAINT unique_message_signal 
+        UNIQUE(message_id, signal_id)
+      `;
+    } catch (error) {
+      // Constraint might already exist, ignore error
+    }
+  
+    try {
+      await client.sql`
+        ALTER TABLE message_signals ADD CONSTRAINT unique_message_start_bit 
+        UNIQUE(message_id, start_bit)
+      `;
+    } catch (error) {
+      // Constraint might already exist, ignore error
+    }
+  
+    return { messages: 'created', message_signals: 'created' };
   }
 
 
@@ -165,7 +223,8 @@ export async function GET() {
     // });
     try {
       await client.sql`BEGIN`;
-      await seedSignals(); //add by zong
+      //await seedSignals(); //add by zong
+      await seedMessages(); //add message tables
       //await seedzongtest();
       //await seedUsers();
       //await seedCustomers();

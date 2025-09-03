@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 
-import { signalFields } from './definitions';
+import { signalFields, MessageState, CreateMessage, MessageSignal } from './definitions';
 
 const FormSchema = z.object({
   id: z.string(),
@@ -21,6 +21,15 @@ const FormSchema = z.object({
     invalid_type_error: 'Please select an invoice status.',
   }),
   date: z.string(),
+});
+
+// Message creation schema
+const MessageSchema = z.object({
+  name: z.string().min(1, { message: 'Name is required.' }),
+  message_id: z.string().min(1, { message: 'Message ID is required.' }).regex(/^0x[0-9A-Fa-f]+$/, { message: 'Message ID must be in hex format (e.g., 0x123).' }),
+  dlc: z.coerce.number().min(1).max(8, { message: 'DLC must be between 1 and 8.' }),
+  cycle_time: z.coerce.number().optional(),
+  description: z.string().optional(),
 });
 
 // Generate SignalSchema from signalFields
@@ -203,4 +212,91 @@ export async function authenticate(
     }
     throw error;
   }
+}
+
+// Message creation action
+export async function createMessage(
+  prevState: MessageState,
+  formData: FormData
+): Promise<MessageState> {
+  // Validate form fields using Zod
+  const validatedFields = MessageSchema.safeParse({
+    name: formData.get('name'),
+    message_id: formData.get('message_id'),
+    dlc: formData.get('dlc'),
+    cycle_time: formData.get('cycle_time'),
+    description: formData.get('description'),
+  });
+
+  // If form validation fails, return errors early
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Missing Fields. Failed to Create Message.',
+    };
+  }
+
+  const { name, message_id, dlc, cycle_time, description } = validatedFields.data;
+
+  try {
+    // Check if message_id already exists
+    const existingMessage = await sql`
+      SELECT id FROM messages WHERE message_id = ${message_id}
+    `;
+
+    if (existingMessage.rows.length > 0) {
+      return {
+        errors: { message_id: ['Message ID already exists.'] },
+        message: 'Message ID must be unique.',
+      };
+    }
+
+    // Insert the message into the database
+    const result = await sql`
+      INSERT INTO messages (name, message_id, dlc, cycle_time, description)
+      VALUES (${name}, ${message_id}, ${dlc}, ${cycle_time || null}, ${description || null})
+      RETURNING id
+    `;
+
+    const messageId = result.rows[0].id;
+
+    // Parse signal mappings from form data if any (now optional for create)
+    const signalMappings: MessageSignal[] = [];
+    const signalIds = formData.getAll('signal_ids');
+    const startBits = formData.getAll('start_bits');
+    const positions = formData.getAll('positions');
+
+    // Only process signal mappings if they exist
+    if (signalIds.length > 0 && startBits.length > 0 && positions.length > 0) {
+      for (let i = 0; i < signalIds.length; i++) {
+        if (signalIds[i] && startBits[i] && positions[i]) {
+          signalMappings.push({
+            message_id: messageId,
+            signal_id: signalIds[i] as string,
+            start_bit: parseInt(startBits[i] as string),
+            position: parseInt(positions[i] as string),
+          });
+        }
+      }
+    }
+
+    // Insert signal mappings if any
+    if (signalMappings.length > 0) {
+      for (const mapping of signalMappings) {
+        await sql`
+          INSERT INTO message_signals (message_id, signal_id, start_bit, position)
+          VALUES (${mapping.message_id}, ${mapping.signal_id}, ${mapping.start_bit}, ${mapping.position})
+        `;
+      }
+    }
+
+  } catch (error) {
+    console.error('Database Error:', error);
+    return {
+      message: 'Database Error: Failed to Create Message.',
+    };
+  }
+
+  revalidatePath('/dashboard/messages');
+  redirect('/dashboard/messages');
 }

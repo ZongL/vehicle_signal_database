@@ -112,19 +112,42 @@ export type InvoiceForm = {
 export type Message = {
   id: string;
   name: string;
-  message_id: string;  // CAN message ID
-  dlc: number;        // Data Length Code
+  message_id: string;  // CAN message ID (hex format like 0x123)
+  dlc: number;        // Data Length Code (1-8 bytes)
+  cycle_time?: number; // Message transmission cycle in ms
+  description?: string;
   signals: Signal[];  // Associated signals
   created_at: string;
 };
 
 export type MessageSignal = {
+  id?: string;
   message_id: string;
-  signal_name: string;
+  signal_id: string;
   start_bit: number;
-  length: number;
   position: number;  // Order in the message
+  created_at?: string;
+};
+
+// For creating new messages
+export type CreateMessage = {
   name: string;
+  message_id: string;
+  dlc: number;
+  cycle_time?: number;
+  description?: string;
+};
+
+// For the message creation form state
+export type MessageState = {
+  errors?: {
+    name?: string[];
+    message_id?: string[];
+    dlc?: string[];
+    cycle_time?: string[];
+    description?: string[];
+  };
+  message?: string | null;
 };
 
 // Signal fields definition for single source of truth
