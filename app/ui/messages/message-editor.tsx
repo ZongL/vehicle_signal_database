@@ -39,13 +39,14 @@ export default function MessageEditor() {
     const position = messageSignals.length;
     const startBit = position * 8;
 
+    // Generate a unique signal_id for this message-signal relationship
+    const signalId = `signal_${signal.name}_${Date.now()}`;
+
     const newMessageSignal: MessageSignal = {
       message_id: message.id,
-      signal_name: signal.name,
+      signal_id: signalId,
       start_bit: startBit,
-      length: signal.length,
       position: position,
-      name: signal.name,
     };
 
     console.log('New message signal:', newMessageSignal);
@@ -91,7 +92,7 @@ export default function MessageEditor() {
                 className="p-3 bg-white rounded-lg border shadow-sm"
               >
                 <div className="flex justify-between items-center">
-                  <span className="font-medium">{messageSignals[index]?.name || signal.name}</span>
+                  <span className="font-medium">{signal.name}</span>
                   <span className="text-sm text-gray-500">
                     Start Bit: {messageSignals[index]?.start_bit}
                   </span>
