@@ -22,7 +22,7 @@
     "tailwindcss": "3.4.16",
     "typescript": "5.7.2",
     "use-debounce": "^10.0.4",
-    "veheeavis": "^1.0.4",
+    "veheeavis": "^1.0.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
