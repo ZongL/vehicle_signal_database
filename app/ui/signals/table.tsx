@@ -1,5 +1,5 @@
 import { signalFields } from '@/app/lib/definitions';
-import { UpdateInvoice, DeleteInvoice } from '@/app/ui/invoices/buttons';
+import { UpdateSignal, DeleteSignal } from '@/app/ui/signals/buttons';
 import { fetchFilteredSignals } from '@/app/lib/data';
 
 export default async function SignalsTable({
@@ -32,8 +32,8 @@ export default async function SignalsTable({
                     <p className="text-xl font-medium">{signal.initialvalue}</p>
                   </div>
                   <div className="flex justify-end gap-2">
-                    <UpdateInvoice id={signal.id} />
-                    <DeleteInvoice id={signal.id} />
+                    <UpdateSignal id={signal.id} />
+                    <DeleteSignal id={signal.id} />
                   </div>
                 </div>
               </div>
@@ -65,8 +65,8 @@ export default async function SignalsTable({
                   ))}
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
-                      <UpdateInvoice id={signal.id} />
-                      <DeleteInvoice id={signal.id} />
+                      <UpdateSignal id={signal.id} />
+                      <DeleteSignal id={signal.id} />
                     </div>
                   </td>
                 </tr>
