@@ -1,7 +1,7 @@
 import { fetchSignals } from '@/app/lib/data';
 
 import CreateSignalForm from '@/app/ui/signals/create-form-test';
-import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
+import Breadcrumbs from '@/app/ui/messages/breadcrumbs';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
