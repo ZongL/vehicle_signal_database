@@ -51,6 +51,18 @@ export async function fetchLatestInvoices() {
   }
 }
 
+export async function fetchLatestSignals() {
+  try {
+    const data = await sql<SignalWithId>`
+      SELECT * FROM signals ORDER BY id DESC LIMIT 3`;
+
+    return data.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch the latest signals.');
+  }
+}
+
 export async function fetchCardData() {
   try {
     // You can probably combine these into a single SQL query
