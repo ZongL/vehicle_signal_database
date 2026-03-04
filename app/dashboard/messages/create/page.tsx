@@ -1,5 +1,5 @@
 import Form from '@/app/ui/messages/create-form';
-import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
+import Breadcrumbs from '@/app/ui/signals/breadcrumbs';
 
 export default async function Page() {
   return (
