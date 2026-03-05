@@ -411,14 +411,7 @@ export async function fetchMessagesPages(query: string) {
 export async function fetchAllSignals() {
   try {
     const data = await sql<SignalWithId>`
-      SELECT
-        id,
-        name,
-        description,
-        length,
-        unit,
-        minivalue,
-        maxvalue
+      SELECT *
       FROM signals
       ORDER BY name ASC
     `;

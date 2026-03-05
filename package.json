@@ -12,6 +12,8 @@
     "autoprefixer": "10.4.20",
     "bcrypt": "^5.1.1",
     "clsx": "^2.1.1",
+    "datatables.net-dt": "^2.3.7",
+    "datatables.net-react": "^1.0.1",
     "next": "15.5.8",
     "next-auth": "5.0.0-beta.19",
     "postcss": "8.4.49",
@@ -27,6 +29,7 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/jquery": "^4.0.0",
     "@types/node": "22.10.1",
     "@types/react": "19.0.0",
     "@types/react-dom": "19.0.0"
