@@ -164,6 +164,12 @@ export async function fetchFilteredSignals(
         signals.unit,
         signals.valuedescription
       FROM signals
+      WHERE
+        signals.name ILIKE ${`%${query}%`} OR
+        signals.description ILIKE ${`%${query}%`} OR
+        signals.unit ILIKE ${`%${query}%`} OR
+        signals.valuedescription ILIKE ${`%${query}%`}
+      ORDER BY signals.name ASC
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
 
@@ -174,26 +180,26 @@ export async function fetchFilteredSignals(
   }
 }
 
-export async function fetchInvoicesPages(query: string) {
+export async function fetchSignalsPages(query: string) {
   try {
     const count = await sql`SELECT COUNT(*)
-    FROM invoices
-    JOIN customers ON invoices.customer_id = customers.id
+    FROM signals
     WHERE
-      customers.name ILIKE ${`%${query}%`} OR
-      customers.email ILIKE ${`%${query}%`} OR
-      invoices.amount::text ILIKE ${`%${query}%`} OR
-      invoices.date::text ILIKE ${`%${query}%`} OR
-      invoices.status ILIKE ${`%${query}%`}
-  `;
+      signals.name ILIKE ${`%${query}%`} OR
+      signals.description ILIKE ${`%${query}%`} OR
+      signals.unit ILIKE ${`%${query}%`} OR
+      signals.valuedescription ILIKE ${`%${query}%`}
+    `;
 
     const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
     return totalPages;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch total number of invoices.');
+    throw new Error('Failed to fetch total number of signals.');
   }
 }
+
+
 
 export async function fetchInvoiceById(id: string) {
   try {
