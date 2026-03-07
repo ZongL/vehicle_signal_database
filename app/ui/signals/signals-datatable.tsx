@@ -28,6 +28,7 @@ export default function SignalsDataTable({
 
   useEffect(() => {
     let dt: any;
+    let aborted = false;
 
     const init = async () => {
       const $ = (await import('jquery')).default;
@@ -35,7 +36,12 @@ export default function SignalsDataTable({
       // @ts-ignore
       await import('datatables.net-dt/css/dataTables.dataTables.min.css');
 
-      if (!tableRef.current) return;
+      if (aborted || !tableRef.current) return;
+
+      // Destroy existing instance to avoid reinitialisation error
+      if (($.fn as any).DataTable.isDataTable(tableRef.current)) {
+        ($ as any)(tableRef.current).DataTable().destroy();
+      }
 
       dt = ($ as any)(tableRef.current).DataTable({
         data: signals,
@@ -79,6 +85,7 @@ export default function SignalsDataTable({
     init();
 
     return () => {
+      aborted = true;
       if (dt) {
         dt.destroy();
       }

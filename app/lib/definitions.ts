@@ -152,22 +152,22 @@ export type MessageState = {
 
 // Signal fields definition for single source of truth
 export const signalFields = [
-  { name: 'name', type: 'string' },
-  { name: 'description', type: 'string' },
-  { name: 'length', type: 'number' },
-  { name: 'byteorder', type: 'string' },
-  { name: 'valuetype', type: 'string' },
-  { name: 'startbyte', type: 'number' },
-  { name: 'startbit', type: 'number' },
-  { name: 'initialvalue', type: 'number' },
-  { name: 'factor', type: 'number' },
-  { name: 'sigoffset', type: 'number' },
-  { name: 'minivalue', type: 'number' },
-  { name: 'maxvalue', type: 'number' },
-  { name: 'rawminivalue', type: 'number' },
-  { name: 'rawmaxvalue', type: 'number' },
-  { name: 'unit', type: 'string' },
-  { name: 'valuedescription', type: 'string' },
+  { name: 'name', type: 'string', label: 'Signal Name', group: 'Basic Info' },
+  { name: 'description', type: 'string', label: 'Description', group: 'Basic Info' },
+  { name: 'length', type: 'number', label: 'Length', group: 'Bit Configuration' },
+  { name: 'byteorder', type: 'string', label: 'Byte Order', group: 'Bit Configuration' },
+  { name: 'valuetype', type: 'string', label: 'Value Type', group: 'Bit Configuration' },
+  { name: 'startbyte', type: 'number', label: 'Start Byte', group: 'Bit Configuration' },
+  { name: 'startbit', type: 'number', label: 'Start Bit', group: 'Bit Configuration' },
+  { name: 'initialvalue', type: 'number', label: 'Initial Value', group: 'Value Conversion' },
+  { name: 'factor', type: 'number', label: 'Factor', group: 'Value Conversion' },
+  { name: 'sigoffset', type: 'number', label: 'Offset', group: 'Value Conversion' },
+  { name: 'minivalue', type: 'number', label: 'Min Value', group: 'Physical Range' },
+  { name: 'maxvalue', type: 'number', label: 'Max Value', group: 'Physical Range' },
+  { name: 'rawminivalue', type: 'number', label: 'Raw Min Value', group: 'Raw Range' },
+  { name: 'rawmaxvalue', type: 'number', label: 'Raw Max Value', group: 'Raw Range' },
+  { name: 'unit', type: 'string', label: 'Unit', group: 'Display' },
+  { name: 'valuedescription', type: 'string', label: 'Value Description', group: 'Display' },
 ] as const;
 
 

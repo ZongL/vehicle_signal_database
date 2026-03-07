@@ -561,3 +561,10 @@ For support and questions:
 ---
 
 **Built with ❤️ for the automotive engineering community**
+
+
+```
+这个网站是用来支持汽车电子的EEA开发而设计的平台，主要用于CAN信号的设计和管理，支持多个工程师根据自己的领域在线创建can信号。
+请优化一下create signals页面显示，改成横向显示，支持各个参数的填写。
+
+```
