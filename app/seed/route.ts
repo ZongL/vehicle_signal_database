@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { db } from '@vercel/postgres';
-import { invoices, customers, revenue, users ,signals,zongtest} from '../lib/placeholder-data';
+import { users, signals, zongtest } from '../lib/placeholder-data';
 
 const client = await db.connect();
 
@@ -32,7 +32,7 @@ async function seedzongtest() {
 
 async function seedSignals() {
     await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-  
+
     await client.sql`
       CREATE TABLE IF NOT EXISTS signals (
         id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -55,7 +55,7 @@ async function seedSignals() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `;
-  
+
     const insertedSignals = await Promise.all(
       signals.map((signal) => client.sql`
         INSERT INTO signals (id, name, length, byteorder, valuetype, initialvalue, factor, sigoffset, minivalue, maxvalue, unit)
@@ -63,13 +63,42 @@ async function seedSignals() {
         ON CONFLICT (id) DO NOTHING;
       `),
     );
-  
+
     return insertedSignals;
   }
-  
+
+  async function seedECUs() {
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+
+    await client.sql`
+      CREATE TABLE IF NOT EXISTS ecus (
+        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        name VARCHAR(255) NOT NULL UNIQUE,
+        description TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+
+    await client.sql`
+      CREATE TABLE IF NOT EXISTS ecu_received_messages (
+        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        ecu_id UUID REFERENCES ecus(id) ON DELETE CASCADE,
+        message_id UUID REFERENCES messages(id) ON DELETE CASCADE,
+        UNIQUE(ecu_id, message_id)
+      );
+    `;
+
+    // Add sender_ecu_id column to messages table
+    await client.sql`
+      ALTER TABLE messages ADD COLUMN IF NOT EXISTS sender_ecu_id UUID REFERENCES ecus(id) ON DELETE SET NULL;
+    `;
+
+    return { ecus: 'created', ecu_received_messages: 'created' };
+  }
+
   async function seedMessages() {
     await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-  
+
     // Create messages table
     await client.sql`
       CREATE TABLE IF NOT EXISTS messages (
@@ -83,7 +112,7 @@ async function seedSignals() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `;
-  
+
     // Create message_signals junction table
     await client.sql`
       CREATE TABLE IF NOT EXISTS message_signals (
@@ -95,26 +124,26 @@ async function seedSignals() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `;
-  
+
     // Add constraints if they don't exist
     try {
       await client.sql`
-        ALTER TABLE message_signals ADD CONSTRAINT unique_message_signal 
+        ALTER TABLE message_signals ADD CONSTRAINT unique_message_signal
         UNIQUE(message_id, signal_id)
       `;
     } catch (error) {
       // Constraint might already exist, ignore error
     }
-  
+
     try {
       await client.sql`
-        ALTER TABLE message_signals ADD CONSTRAINT unique_message_start_bit 
+        ALTER TABLE message_signals ADD CONSTRAINT unique_message_start_bit
         UNIQUE(message_id, start_bit)
       `;
     } catch (error) {
       // Constraint might already exist, ignore error
     }
-  
+
     return { messages: 'created', message_signals: 'created' };
   }
 
@@ -144,94 +173,16 @@ async function seedUsers() {
   return insertedUsers;
 }
 
-async function seedInvoices() {
-  await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
-  await client.sql`
-    CREATE TABLE IF NOT EXISTS invoices (
-      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-      customer_id UUID NOT NULL,
-      amount INT NOT NULL,
-      status VARCHAR(255) NOT NULL,
-      date DATE NOT NULL
-    );
-  `;
-
-  const insertedInvoices = await Promise.all(
-    invoices.map(
-      (invoice) => client.sql`
-        INSERT INTO invoices (customer_id, amount, status, date)
-        VALUES (${invoice.customer_id}, ${invoice.amount}, ${invoice.status}, ${invoice.date})
-        ON CONFLICT (id) DO NOTHING;
-      `,
-    ),
-  );
-
-  return insertedInvoices;
-}
-
-async function seedCustomers() {
-  await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
-  await client.sql`
-    CREATE TABLE IF NOT EXISTS customers (
-      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      email VARCHAR(255) NOT NULL,
-      image_url VARCHAR(255) NOT NULL
-    );
-  `;
-
-  const insertedCustomers = await Promise.all(
-    customers.map(
-      (customer) => client.sql`
-        INSERT INTO customers (id, name, email, image_url)
-        VALUES (${customer.id}, ${customer.name}, ${customer.email}, ${customer.image_url})
-        ON CONFLICT (id) DO NOTHING;
-      `,
-    ),
-  );
-
-  return insertedCustomers;
-}
-
-async function seedRevenue() {
-  await client.sql`
-    CREATE TABLE IF NOT EXISTS revenue (
-      month VARCHAR(4) NOT NULL UNIQUE,
-      revenue INT NOT NULL
-    );
-  `;
-
-  const insertedRevenue = await Promise.all(
-    revenue.map(
-      (rev) => client.sql`
-        INSERT INTO revenue (month, revenue)
-        VALUES (${rev.month}, ${rev.revenue})
-        ON CONFLICT (month) DO NOTHING;
-      `,
-    ),
-  );
-
-  return insertedRevenue;
-}
-
 export async function GET() {
-    // return Response.json({
-    //   message:
-    //     'Uncomment this file and remove this line. You can delete this file when you are finished.',
-    // });
     try {
       await client.sql`BEGIN`;
       //await seedSignals(); //add by zong
-      await seedMessages(); //add message tables
+      //await seedMessages(); //add message tables
+      await seedECUs(); //add ECU tables
       //await seedzongtest();
       //await seedUsers();
-      //await seedCustomers();
-      //await seedInvoices();
-      //await seedRevenue();
       await client.sql`COMMIT`;
-  
+
       return Response.json({ message: 'Database seeded successfully' });
     } catch (error) {
       await client.sql`ROLLBACK`;

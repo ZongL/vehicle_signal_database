@@ -1,14 +1,22 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { createMessage } from '@/app/lib/actions';
-import { CheckIcon, ClockIcon, UserCircleIcon, CurrencyDollarIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
+import { CheckIcon, ClockIcon, UserCircleIcon, CurrencyDollarIcon, DocumentTextIcon, CpuChipIcon } from '@heroicons/react/24/outline';
 
 // Main Create Message Form
 export default function CreateMessageForm() {
   const initialState = { message: null, errors: {} };
   const [state, dispatch] = useActionState(createMessage, initialState);
+  const [ecus, setEcus] = useState<{ id: string; name: string }[]>([]);
+
+  useEffect(() => {
+    fetch('/api/ecus')
+      .then((res) => res.json())
+      .then((data) => setEcus(data))
+      .catch(() => setEcus([]));
+  }, []);
 
   return (
     <form action={dispatch} className="space-y-6">
@@ -146,6 +154,32 @@ export default function CreateMessageForm() {
           </div>
           <p className="mt-1 text-xs text-gray-500">
             Optional description for this CAN message
+          </p>
+        </div>
+
+        {/* Sender ECU */}
+        <div className="mb-4">
+          <label htmlFor="sender_ecu_id" className="mb-2 block text-sm font-medium">
+            Sender ECU - Optional
+          </label>
+          <div className="relative">
+            <select
+              id="sender_ecu_id"
+              name="sender_ecu_id"
+              defaultValue=""
+              className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2"
+            >
+              <option value="">None</option>
+              {ecus.map((ecu) => (
+                <option key={ecu.id} value={ecu.id}>
+                  {ecu.name}
+                </option>
+              ))}
+            </select>
+            <CpuChipIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
+          </div>
+          <p className="mt-1 text-xs text-gray-500">
+            Select the ECU that sends this message
           </p>
         </div>
 

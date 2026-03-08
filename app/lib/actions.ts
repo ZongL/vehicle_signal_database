@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 
-import { signalFields, MessageState, CreateMessage, MessageSignal } from './definitions';
+import { signalFields, MessageState, CreateMessage, MessageSignal, ECUState } from './definitions';
 
 const FormSchema = z.object({
   id: z.string(),
@@ -29,6 +29,13 @@ const MessageSchema = z.object({
   message_id: z.string().min(1, { message: 'Message ID is required.' }).regex(/^0x[0-9A-Fa-f]+$/, { message: 'Message ID must be in hex format (e.g., 0x123).' }),
   dlc: z.coerce.number().min(1).max(8, { message: 'DLC must be between 1 and 8.' }),
   cycle_time: z.coerce.number().optional(),
+  description: z.string().optional(),
+  sender_ecu_id: z.string().optional(),
+});
+
+// ECU creation schema
+const ECUSchema = z.object({
+  name: z.string().min(1, { message: 'ECU name is required.' }),
   description: z.string().optional(),
 });
 
@@ -231,6 +238,7 @@ export async function createMessage(
     dlc: formData.get('dlc'),
     cycle_time: formData.get('cycle_time'),
     description: formData.get('description'),
+    sender_ecu_id: formData.get('sender_ecu_id'),
   });
 
   // If form validation fails, return errors early
@@ -241,7 +249,7 @@ export async function createMessage(
     };
   }
 
-  const { name, message_id, dlc, cycle_time, description } = validatedFields.data;
+  const { name, message_id, dlc, cycle_time, description, sender_ecu_id } = validatedFields.data;
 
   try {
     // Check if message_id already exists
@@ -258,8 +266,8 @@ export async function createMessage(
 
     // Insert the message into the database
     const result = await sql`
-      INSERT INTO messages (name, message_id, dlc, cycle_time, description)
-      VALUES (${name}, ${message_id}, ${dlc}, ${cycle_time || null}, ${description || null})
+      INSERT INTO messages (name, message_id, dlc, cycle_time, description, sender_ecu_id)
+      VALUES (${name}, ${message_id}, ${dlc}, ${cycle_time || null}, ${description || null}, ${sender_ecu_id || null})
       RETURNING id
     `;
 
@@ -304,4 +312,44 @@ export async function createMessage(
 
   revalidatePath('/dashboard/messages');
   redirect('/dashboard/messages');
+}
+
+// ECU creation action
+export async function createECU(
+  prevState: ECUState,
+  formData: FormData
+): Promise<ECUState> {
+  const validatedFields = ECUSchema.safeParse({
+    name: formData.get('name'),
+    description: formData.get('description'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Missing Fields. Failed to Create ECU.',
+    };
+  }
+
+  const { name, description } = validatedFields.data;
+
+  try {
+    await sql`
+      INSERT INTO ecus (name, description)
+      VALUES (${name}, ${description || null})
+    `;
+  } catch (error) {
+    console.error('Database Error:', error);
+    return {
+      message: 'Database Error: Failed to Create ECU. Name may already exist.',
+    };
+  }
+
+  revalidatePath('/dashboard/ecus');
+  redirect('/dashboard/ecus');
+}
+
+export async function deleteECU(id: string) {
+  await sql`DELETE FROM ecus WHERE id = ${id}`;
+  revalidatePath('/dashboard/ecus');
 }

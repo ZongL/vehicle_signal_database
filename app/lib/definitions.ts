@@ -181,3 +181,19 @@ export type Signal = {
 };
 
 export type SignalWithId = Signal & { id: string };
+
+export type ECU = {
+  id: string;
+  name: string;
+  description?: string;
+  created_at?: string;
+  message_count?: number;
+};
+
+export type ECUState = {
+  errors?: {
+    name?: string[];
+    description?: string[];
+  };
+  message?: string | null;
+};

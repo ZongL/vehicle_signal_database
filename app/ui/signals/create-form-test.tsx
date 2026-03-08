@@ -6,123 +6,108 @@ import { Button } from '@/app/ui/button';
 import { createSignals, signalState } from '@/app/lib/actions';
 import { useActionState } from 'react';
 
-const groupOrder = [
-  'Basic Info',
-  'Bit Configuration',
-  'Value Conversion',
-  'Physical Range',
-  'Raw Range',
-  'Display',
-];
-
-const wideFields = new Set(['name', 'description']);
-
 export default function CreateSignalForm() {
   const initialState: signalState = { message: '', errors: {} };
   const [sigState, formAction] = useActionState(createSignals, initialState);
 
-  // Group fields by their group property
-  const grouped = groupOrder.map((group) => ({
-    group,
-    fields: signalFields.filter((f) => f.group === group),
-  }));
+  const hasErrors = sigState.errors && Object.keys(sigState.errors).length > 0;
 
   return (
     <form action={formAction}>
-      <div className="rounded-md bg-gray-50 p-4 md:p-6">
-        {grouped.map(({ group, fields }) => (
-          <div key={group} className="mb-6">
-            <h3 className="text-base font-semibold text-gray-700 mb-3">
-              {group}
-            </h3>
-            <hr className="mb-4 border-gray-200" />
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {fields.map((field) => {
-                let inputEl = null;
+      <div className="overflow-x-auto rounded-md border border-gray-200">
+        <table className="min-w-full text-sm">
+          <thead>
+            <tr className="bg-gray-100 border-b border-gray-200">
+              {signalFields.map((field) => (
+                <th
+                  key={field.name}
+                  className="px-3 py-2 text-left font-medium text-gray-700 whitespace-nowrap"
+                >
+                  {field.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {/* Input row */}
+            <tr className="border-b border-gray-100">
+              {signalFields.map((field) => {
+                const hasError = sigState.errors?.[field.name]?.length;
+                const cellClass = `px-2 py-2 ${hasError ? 'bg-red-50' : ''}`;
+                const inputClass =
+                  'block w-full rounded border border-gray-300 py-1.5 px-2 text-sm outline-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500' +
+                  (hasError ? ' border-red-400' : '');
+
                 if (field.name === 'byteorder') {
-                  inputEl = (
-                    <select
-                      id="byteorder"
-                      name="byteorder"
-                      className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 px-3 text-sm outline-2 placeholder:text-gray-500"
-                      defaultValue=""
-                      aria-describedby="byteorder-error"
-                    >
-                      <option value="" disabled>
-                        Select byte order
-                      </option>
-                      <option value="big-endian">Big-Endian</option>
-                      <option value="little-endian">Little-Endian</option>
-                    </select>
-                  );
-                } else if (field.name === 'valuetype') {
-                  inputEl = (
-                    <select
-                      id="valuetype"
-                      name="valuetype"
-                      className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 px-3 text-sm outline-2 placeholder:text-gray-500"
-                      defaultValue=""
-                      aria-describedby="valuetype-error"
-                    >
-                      <option value="" disabled>
-                        Select value type
-                      </option>
-                      <option value="signed">Signed</option>
-                      <option value="unsigned">Unsigned</option>
-                    </select>
-                  );
-                } else {
-                  inputEl = (
-                    <input
-                      id={field.name}
-                      name={field.name}
-                      type={field.type === 'number' ? 'number' : 'text'}
-                      placeholder={`Enter ${field.label}`}
-                      className="peer block w-full rounded-md border border-gray-200 py-2 px-3 text-sm outline-2 placeholder:text-gray-500"
-                      aria-describedby={`${field.name}-error`}
-                    />
+                  return (
+                    <td key={field.name} className={cellClass}>
+                      <select
+                        name="byteorder"
+                        className={inputClass + ' cursor-pointer'}
+                        defaultValue=""
+                        style={{ minWidth: '120px' }}
+                      >
+                        <option value="" disabled>--</option>
+                        <option value="big-endian">Big-Endian</option>
+                        <option value="little-endian">Little-Endian</option>
+                      </select>
+                    </td>
                   );
                 }
+
+                if (field.name === 'valuetype') {
+                  return (
+                    <td key={field.name} className={cellClass}>
+                      <select
+                        name="valuetype"
+                        className={inputClass + ' cursor-pointer'}
+                        defaultValue=""
+                        style={{ minWidth: '100px' }}
+                      >
+                        <option value="" disabled>--</option>
+                        <option value="signed">Signed</option>
+                        <option value="unsigned">Unsigned</option>
+                      </select>
+                    </td>
+                  );
+                }
+
+                const isWide = field.name === 'name' || field.name === 'description';
+
                 return (
-                  <div
-                    key={field.name}
-                    className={wideFields.has(field.name) ? 'col-span-2' : ''}
-                  >
-                    <label
-                      htmlFor={field.name}
-                      className="mb-2 block text-sm font-medium"
-                    >
-                      {field.label}
-                    </label>
-                    {inputEl}
-                    <div
-                      id={`${field.name}-error`}
-                      aria-live="polite"
-                      aria-atomic="true"
-                    >
-                      {sigState.errors?.[field.name] &&
-                        sigState.errors[field.name]?.map((error: string) => (
-                          <p
-                            className="mt-2 text-sm text-red-500"
-                            key={error}
-                          >
-                            {error}
-                          </p>
-                        ))}
-                    </div>
-                  </div>
+                  <td key={field.name} className={cellClass}>
+                    <input
+                      name={field.name}
+                      type={field.type === 'number' ? 'number' : 'text'}
+                      placeholder={field.label}
+                      className={inputClass}
+                      style={{ minWidth: isWide ? '150px' : '90px' }}
+                    />
+                  </td>
                 );
               })}
-            </div>
-          </div>
-        ))}
-        <div aria-live="polite" aria-atomic="true">
-          {sigState.message ? (
-            <p className="mt-2 text-sm text-red-500">{sigState.message}</p>
-          ) : null}
-        </div>
+            </tr>
+            {/* Error row - only shown when there are errors */}
+            {hasErrors && (
+              <tr>
+                {signalFields.map((field) => (
+                  <td key={field.name} className="px-2 pt-1 pb-2 align-top">
+                    {sigState.errors?.[field.name]?.map((error: string) => (
+                      <p className="text-xs text-red-500" key={error}>
+                        {error}
+                      </p>
+                    ))}
+                  </td>
+                ))}
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
-      <div className="mt-6 flex justify-end gap-4">
+      {sigState.message && (
+        <p className="mt-2 text-sm text-red-500">{sigState.message}</p>
+      )}
+      <div className="mt-4 flex justify-end gap-4">
         <Link
           href="/dashboard/signals"
           className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"

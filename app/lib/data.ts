@@ -9,6 +9,7 @@ import {
   SignalWithId,
   Message,
   MessageSignal,
+  ECU,
 } from './definitions';
 import { formatCurrency } from './utils';
 
@@ -71,21 +72,19 @@ export async function fetchCardData() {
     const signalCountPromise = sql`SELECT COUNT(*) FROM signals`;
     const userCountPromise = sql`SELECT COUNT(*) FROM users`;
     const messageCountPromise = sql`SELECT COUNT(*) FROM messages`;
-    const invoiceStatusPromise = sql`SELECT
-         SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
-         SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
-         FROM invoices`;
+    const ecuCountPromise = sql`SELECT COUNT(*) FROM ecus`.catch(() => ({ rows: [{ count: '0' }] }));
 
     const data = await Promise.all([
       signalCountPromise,
       userCountPromise,
       messageCountPromise,
+      ecuCountPromise,
     ]);
 
     const numberOfSignals = Number(data[0].rows[0].count ?? '0');
     const numberOfUsers = Number(data[1].rows[0].count ?? '0');
     const numberOfMessages = Number(data[2].rows[0].count ?? '0');
-    const numberOfECUs = 0;
+    const numberOfECUs = Number(data[3].rows[0].count ?? '0');
     // const totalPaidInvoices = formatCurrency(data[2].rows[0].paid ?? '0');
     // const totalPendingInvoices = formatCurrency(data[2].rows[0].pending ?? '0');
 
@@ -420,5 +419,27 @@ export async function fetchAllSignals() {
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch all signals.');
+  }
+}
+
+export async function fetchAllECUs() {
+  try {
+    const data = await sql<ECU>`
+      SELECT
+        e.id,
+        e.name,
+        e.description,
+        e.created_at,
+        COUNT(m.id) as message_count
+      FROM ecus e
+      LEFT JOIN messages m ON m.sender_ecu_id = e.id
+      GROUP BY e.id, e.name, e.description, e.created_at
+      ORDER BY e.name ASC
+    `;
+
+    return data.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    return [];
   }
 }

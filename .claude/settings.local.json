@@ -3,7 +3,9 @@
     "allow": [
       "Bash(npx next:*)",
       "Bash(npm install:*)",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(xargs grep:*)",
+      "Bash(rm:*)"
     ]
   }
 }
