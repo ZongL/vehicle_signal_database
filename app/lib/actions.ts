@@ -13,7 +13,7 @@ import { signalFields, MessageState, MessageSignal, ECUState } from './definitio
 const MessageSchema = z.object({
   name: z.string().min(1, { message: 'Name is required.' }),
   message_id: z.string().min(1, { message: 'Message ID is required.' }).regex(/^0x[0-9A-Fa-f]+$/, { message: 'Message ID must be in hex format (e.g., 0x123).' }),
-  dlc: z.coerce.number().min(1).max(8, { message: 'DLC must be between 1 and 8.' }),
+  dlc: z.coerce.number().min(1).max(64, { message: 'DLC must be between 1 and 64.' }),
   cycle_time: z.coerce.number().optional(),
   description: z.string().optional(),
   sender_ecu_id: z.string().optional(),

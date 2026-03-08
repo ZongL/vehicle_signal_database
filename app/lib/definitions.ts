@@ -37,7 +37,7 @@ export type Message = {
   id: string;
   name: string;
   message_id: string;  // CAN message ID (hex format like 0x123)
-  dlc: number;        // Data Length Code (1-8 bytes)
+  dlc: number;        // Data Length Code (CAN: 1-8, CAN FD: 12/16/20/24/32/48/64)
   cycle_time?: number; // Message transmission cycle in ms
   description?: string;
   signals: Signal[];  // Associated signals
