@@ -1,5 +1,6 @@
 import CardWrapper from '@/app/ui/dashboard/cards';
 import LatestSignals from '@/app/ui/dashboard/latest-signals';
+import BusLoad from '@/app/ui/dashboard/bus-load';
 import { lusitana } from '@/app/ui/fonts';
 import { Suspense } from 'react';
 import {
@@ -19,6 +20,7 @@ export default async function Page() {
         </Suspense>
       </div>
       <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
+        <BusLoad />
         <Suspense fallback={<LatestSignalsSkeleton />}>
           <LatestSignals />
         </Suspense>
