@@ -1,5 +1,3 @@
-import { fetchSignals } from '@/app/lib/data';
-
 import CreateSignalForm from '@/app/ui/signals/create-form-test';
 import Breadcrumbs from '@/app/ui/signals/breadcrumbs';
 import { Metadata } from 'next';
@@ -9,8 +7,6 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const customers = await fetchSignals();
-
   return (
     <main>
       <Breadcrumbs
@@ -23,7 +19,6 @@ export default async function Page() {
           },
         ]}
       />
-      {/* <Form customers={customers} />   */}
       <CreateSignalForm/>
     </main>
   );

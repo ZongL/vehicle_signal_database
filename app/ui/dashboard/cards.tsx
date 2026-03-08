@@ -1,5 +1,5 @@
 import {
-  ClockIcon,
+  CpuChipIcon,
   UserGroupIcon,
   DocumentChartBarIcon,
   EnvelopeIcon,
@@ -8,10 +8,10 @@ import { lusitana } from '@/app/ui/fonts';
 import { fetchCardData } from '@/app/lib/data';
 
 const iconMap = {
-  inboxing: EnvelopeIcon,
-  customers: UserGroupIcon,
-  pending: ClockIcon,
+  ecus: CpuChipIcon,
+  messages: EnvelopeIcon,
   signals: DocumentChartBarIcon,
+  users: UserGroupIcon,
 };
 
 export default async function CardWrapper() {
@@ -24,11 +24,10 @@ export default async function CardWrapper() {
 
   return (
     <>
-      <Card title="Total ECUs" value={numberOfECUs} type="inboxing" />
-      <Card title="Total Messages" value={numberOfMessages} type="inboxing" />
+      <Card title="Total ECUs" value={numberOfECUs} type="ecus" />
+      <Card title="Total Messages" value={numberOfMessages} type="messages" />
       <Card title="Total Signals" value={numberOfSignals} type="signals" />
-      <Card title="Total Users" value={numberOfUsers} type="customers" />
-      {/* <Card title="Total Customers" value={numberOfUsers} type="customers"/> */}
+      <Card title="Total Users" value={numberOfUsers} type="users" />
     </>
   );
 }
@@ -40,7 +39,7 @@ export function Card({
 }: {
   title: string;
   value: number | string;
-  type: 'inboxing' | 'customers' | 'pending' | 'signals';
+  type: 'ecus' | 'messages' | 'signals' | 'users';
 }) {
   const Icon = iconMap[type];
 
